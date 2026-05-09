@@ -1,0 +1,15 @@
+{
+	"name": "df-sisger-datalake-rdvh",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "chilecentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ccf8d524-eae6-4cec-89b7-9ad06085396f",
+		"tenantId": "cc28633f-12b8-46cb-bc15-951dae239b4d"
+	}
+}
