@@ -1,5 +1,5 @@
 {
-	"name": "Ventas_LPZ_csv",
+	"name": "Ventas_online_csv",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "datalake_ventas",
@@ -13,55 +13,66 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "ventas_sucursal_lpz.csv",
+				"fileName": "ventas_online.csv",
 				"folderPath": "bronze",
 				"fileSystem": "datalake-ventas"
 			},
 			"columnDelimiter": ",",
-			"encodingName": "ISO-8859-1",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
 		"schema": [
 			{
-				"name": "ID_Venta",
+				"name": "order_id",
 				"type": "String"
 			},
 			{
-				"name": "Fecha_Venta",
+				"name": "timestamp",
 				"type": "String"
 			},
 			{
-				"name": "Producto",
+				"name": "product",
 				"type": "String"
 			},
 			{
-				"name": "Cant",
+				"name": "qty",
 				"type": "String"
 			},
 			{
-				"name": "PrecioUnit",
+				"name": "unit_price",
 				"type": "String"
 			},
 			{
-				"name": "Sucursal",
+				"name": "customer/name",
 				"type": "String"
 			},
 			{
-				"name": "Vendedor",
+				"name": "customer/email",
 				"type": "String"
 			},
 			{
-				"name": "NombreCliente",
+				"name": "customer/city",
 				"type": "String"
 			},
 			{
-				"name": "EmailCliente",
+				"name": "payment_method",
 				"type": "String"
 			},
 			{
-				"name": "MetodoPago",
+				"name": "status",
+				"type": "String"
+			},
+			{
+				"name": "shipping_cost",
+				"type": "String"
+			},
+			{
+				"name": "channel",
+				"type": "String"
+			},
+			{
+				"name": "customer",
 				"type": "String"
 			}
 		]
