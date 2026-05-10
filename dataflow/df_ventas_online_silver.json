@@ -1,0 +1,113 @@
+{
+	"name": "df_ventas_online_silver",
+	"properties": {
+		"folder": {
+			"name": "Bronze"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Ventas_online_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ventas_scz_limpio_csv",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "derivedColumn4"
+				},
+				{
+					"name": "filter1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          order_id as string,",
+				"          timestamp as string,",
+				"          product as string,",
+				"          qty as string,",
+				"          unit_price as string,",
+				"          {customer/name} as string,",
+				"          {customer/email} as string,",
+				"          {customer/city} as string,",
+				"          payment_method as string,",
+				"          status as string,",
+				"          shipping_cost as string,",
+				"          channel as string,",
+				"          customer as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 select(mapColumn(",
+				"          id_orden = order_id,",
+				"          fecha = timestamp,",
+				"          producto = product,",
+				"          cantidad = qty,",
+				"          precio_unitario = unit_price,",
+				"          nombre_cliente = {customer/name},",
+				"          email_cliente = {customer/email},",
+				"          ciudad_cliente = {customer/city},",
+				"          metodo_pago = payment_method,",
+				"          estatus = status,",
+				"          costo = shipping_cost,",
+				"          canal = channel,",
+				"          cliente = customer",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive(id_oiden = trim(id_orden),",
+				"          fecha = trim(fecha),",
+				"          producto = trim(producto),",
+				"          cantidad = trim(cantidad),",
+				"          precio_unitario = trim(precio_unitario),",
+				"          nombre_cliente = trim(nombre_cliente),",
+				"          email_cliente = trim(email_cliente),",
+				"          ciudad_cliente = trim(ciudad_cliente),",
+				"          metodo_pago = trim(metodo_pago),",
+				"          estatus = trim(estatus),",
+				"          costo = trim(costo),",
+				"          canal = trim(canal),",
+				"          cliente = trim(cliente)) ~> derivedColumn1",
+				"derivedColumn1 derive(fecha = coalesce(toDate(fecha,'yyyy-MM-dd'),toDate(fecha,'dd-MM-yyyy'),toDate(fecha,'MM-dd-yyyy'),toDate(fecha,'dd/MM/yyyy'),toDate(fecha,'yyyy/MM/dd'),toDate(fecha,'dd/MM/yyyy'),toDate(fecha,'dd/MMM/yyyy'),toDate(fecha,'dd-MMM-yyyy'),toDate(fecha,'MMM-dd-yyyy'))) ~> derivedColumn2",
+				"derivedColumn2 derive(cantidad = toInteger(cantidad),",
+				"          precio_unitario = toFloat(regexReplace(toString(precio_unitario),'[^0-9.]',''))) ~> derivedColumn3",
+				"derivedColumn3 derive(producto = initCap(regexReplace(producto,'\\\\s+',' '))) ~> derivedColumn4",
+				"derivedColumn4 filter(cantidad > 0 && !isNull(precio_unitario) && !isNull(fecha)) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['ventas_online_limpio.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
